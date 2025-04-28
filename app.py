@@ -269,7 +269,8 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                              "qwen2-vl-2b (ssh)", 
                              "qwen2-vl-7b (ssh)",
                              "qwen2.5-vl-7b (ssh)", 
-                             "claude-3-5-sonnet-20241022"],
+                             "claude-3-5-sonnet-20241022",
+                             "claude-3-7-sonnet-20250219"],
                     value="gpt-4o",
                     interactive=True,
                 )
@@ -457,6 +458,19 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
             actor_model_interactive = False
             api_key_type = "password"  # Display API key in password form
 
+        elif model_selection == "claude-3-7-sonnet-20250219":
+            # Provider can be any of the current choices except 'openai'
+            provider_choices = [option.value for option in APIProvider if option.value != "openai"]
+            provider_value = "anthropic"  # Set default to 'anthropic'
+            state['actor_provider'] = "anthropic" 
+            provider_interactive = True
+            api_key_interactive = True
+            api_key_placeholder = "claude API key"
+            actor_model_choices = ["claude-3-7-sonnet-20250219"]
+            actor_model_value = "claude-3-7-sonnet-20250219"
+            actor_model_interactive = False
+            api_key_type = "password"  # Display API key in password form
+
         else:
             raise ValueError(f"Model {model_selection} not supported")
 
@@ -502,7 +516,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
         logger.info(f"Actor model updated to: {state['actor_model']}")
 
     def update_api_key_placeholder(provider_value, model_selection):
-        if model_selection == "claude-3-5-sonnet-20241022":
+        if model_selection in ["claude-3-5-sonnet-20241022", "claude-3-7-sonnet-20250219"]:
             if provider_value == "anthropic":
                 return gr.update(placeholder="anthropic API key")
             elif provider_value == "bedrock":
@@ -627,6 +641,6 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
         outputs=None
     )
 
-demo.launch(share=False,
+demo.launch(share=True,
             allowed_paths=["./"],
             server_port=7888)  # TODO: allowed_paths

@@ -27,7 +27,7 @@ class APIProvider(StrEnum):
 
 
 PROVIDER_TO_DEFAULT_MODEL_NAME: dict[APIProvider, str] = {
-    APIProvider.ANTHROPIC: "claude-3-5-sonnet-20241022",
+    APIProvider.ANTHROPIC: "claude-3-7-sonnet-20250219",
     APIProvider.BEDROCK: "anthropic.claude-3-5-sonnet-20241022-v2:0",
     APIProvider.VERTEX: "claude-3-5-sonnet-v2@20241022",
     APIProvider.OPENAI: "gpt-4o",
@@ -37,6 +37,7 @@ PROVIDER_TO_DEFAULT_MODEL_NAME: dict[APIProvider, str] = {
 
 PLANNER_MODEL_CHOICES_MAPPING = {
     "claude-3-5-sonnet-20241022": "claude-3-5-sonnet-20241022",
+    "claude-3-7-sonnet-20250219": "claude-3-7-sonnet-20250219",
     "gpt-4o": "gpt-4o",
     "gpt-4o-mini": "gpt-4o-mini", 
     "qwen2-vl-max": "qwen2-vl-max",
@@ -81,7 +82,7 @@ def sampling_loop_sync(
     else:
         raise ValueError(f"Planner Model {planner_model} not supported")
     
-    if planner_model == "claude-3-5-sonnet-20241022":
+    if planner_model == "claude-3-5-sonnet-20241022" or planner_model == "claude-3-7-sonnet-20250219":
         
         from computer_use_demo.gui_agent.planner.anthropic_agent import AnthropicActor
         from computer_use_demo.executor.anthropic_executor import AnthropicExecutor
@@ -209,7 +210,7 @@ def sampling_loop_sync(
             selected_screen=selected_screen
         )
         
-    elif actor_model == "claude-3-5-sonnet-20241022":
+    elif actor_model == "claude-3-5-sonnet-20241022" or actor_model == "claude-3-7-sonnet-20250219":
         loop_mode = "unified"
 
     else:
