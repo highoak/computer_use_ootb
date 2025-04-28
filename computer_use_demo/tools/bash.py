@@ -1,5 +1,6 @@
 import asyncio
 import os
+import platform
 from typing import ClassVar, Literal
 
 from anthropic.types.beta import BetaToolBash20250124Param
@@ -13,7 +14,8 @@ class _BashSession:
     _started: bool
     _process: asyncio.subprocess.Process
 
-    command: str = "/bin/bash"
+    # Set command based on platform
+    command: str = "powershell.exe" if platform.system() == "Windows" else "/bin/bash"
     _output_delay: float = 0.2  # seconds
     _timeout: float = 120.0  # seconds
     _sentinel: str = "<<exit>>"
@@ -28,7 +30,7 @@ class _BashSession:
 
         self._process = await asyncio.create_subprocess_shell(
             self.command,
-            shell=False,
+            shell=True,  # Set shell=True for Windows compatibility
             stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
@@ -64,8 +66,9 @@ class _BashSession:
         assert self._process.stderr
 
         # send command to the process
+        sentinel_cmd = f"; echo '{self._sentinel}'" if platform.system() != "Windows" else f"; echo '{self._sentinel}'"
         self._process.stdin.write(
-            command.encode() + f"; echo '{self._sentinel}'\n".encode()
+            command.encode() + sentinel_cmd.encode() + b"\n"
         )
         await self._process.stdin.drain()
 
