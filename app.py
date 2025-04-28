@@ -14,6 +14,10 @@ from functools import partial
 from pathlib import Path
 from typing import cast, Dict
 from PIL import Image
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 import gradio as gr
 from anthropic import APIResponse
